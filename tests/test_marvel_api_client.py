@@ -1,0 +1,1 @@
+from marvel_api_client import marvel_api_client
