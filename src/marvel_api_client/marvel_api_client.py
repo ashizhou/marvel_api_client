@@ -160,3 +160,202 @@ def get_popular_hero_stats_with_initials(letter):
         ax = sns.catplot(data = df2, x = 'variable',y = 'value', hue = 'character', kind ='bar', height = 60, aspect = 21/8, palette = sns.color_palette("ch:s=-.2,r=.6"))
         ax.set(xlabel='Character', ylabel='Number of occurrences')
         plt.show()
+
+def get_hero_most_recent_comics(name):
+    '''
+    get most recent 5 comics of searched hero
+
+    Parameters
+    ---
+    name: string
+        Input string for interested marvel character name
+    '''
+    url = 'http://gateway.marvel.com/v1/public/characters?nameStartsWith=' 
+    option = '&limit=1&orderBy=-modified&'
+    m = hashlib.md5() 
+    ts = str(time.time())
+    ts_byte = bytes(ts, 'utf-8')  
+    m.update(ts_byte) 
+    m.update(b'cc695d675d0bcda21f1e70dc37be9a0dc59511c9')
+    m.update(b"cc4e5692a3f7e7f48ec7b924e636cf3b")
+    hasht = m.hexdigest() 
+    payload = {'ts': ts, 'apikey': PUBLIC_KEY, 'hash': hasht}
+    r = requests.get(url+str(name)+option, params=payload)
+    result = r.json()
+    if result['data']['count'] == 0:
+        print('Ooooops there is no match, please try again (e.g. Spider-Man, Hulk). ')
+    else:
+        print(BOLD + 'MARVEL CHARACTER: ' + END +result['data']['results'][0]['name'])
+        char_id = result['data']['results'][0]['id']
+        url = 'http://gateway.marvel.com/v1/public/characters/'+str(char_id)+'/comics?'
+        option = 'orderBy=-modified&&limit=5&'
+        m = hashlib.md5() 
+        ts = str(time.time())
+        ts_byte = bytes(ts, 'utf-8')  
+        m.update(ts_byte) 
+        m.update(b'cc695d675d0bcda21f1e70dc37be9a0dc59511c9')
+        m.update(b"cc4e5692a3f7e7f48ec7b924e636cf3b")
+        hasht = m.hexdigest() 
+        payload = {'ts': ts, 'apikey': PUBLIC_KEY, 'hash': hasht}
+        r = requests.get(url+option, params=payload)
+        result = r.json()
+        comics = result['data']['results']
+        for i in comics:
+            print(BOLD + 'TITLE: ' + END + str(i['title']))
+            print(BOLD + 'DESCRIPTION: ' + END + str(i['description']))
+            creator_list = []
+            
+            creator = i['creators']['items']
+            for j in creator:
+                creator_list.append(j['name'])
+            creator_list_1 = ', '.join(creator_list)
+            print(BOLD + 'CREATORS: ' + END + str(creator_list_1))
+            
+            char_list = []
+            character = i['characters']['items']
+            for k in character:
+                char_list.append(k['name'])
+            char_list_1 = ', '.join(char_list)
+            print(BOLD + 'CHRACTERS: ' + END + str(char_list_1))
+
+            img_url = i['thumbnail']['path']+'.jpg'
+            im = Image.open(requests.get(img_url, stream=True).raw)
+            new_img = im.resize((400,500))
+            plt.axis('off')
+            plt.imshow(new_img)
+            plt.show() 
+            print(BOLD + '------------------------------------------------' + END)
+
+def get_hero_most_recent_events(name):
+    '''
+    get most recent 3 events of searched hero
+
+    Parameters
+    ---
+    name: string
+        Input string for interested marvel character name
+    '''
+    url = 'http://gateway.marvel.com/v1/public/characters?nameStartsWith=' 
+    option = '&limit=1&orderBy=-modified&'
+    m = hashlib.md5() 
+    ts = str(time.time())
+    ts_byte = bytes(ts, 'utf-8')  
+    m.update(ts_byte) 
+    m.update(b'cc695d675d0bcda21f1e70dc37be9a0dc59511c9')
+    m.update(b"cc4e5692a3f7e7f48ec7b924e636cf3b")
+    hasht = m.hexdigest() 
+    payload = {'ts': ts, 'apikey': PUBLIC_KEY, 'hash': hasht}
+    r = requests.get(url+str(name)+option, params=payload)
+    result = r.json()
+    if result['data']['count'] == 0:
+        print('Ooooops there is no match, please try again (e.g. Spider-Man, Hulk). ')
+    else:
+        print(BOLD + 'MARVEL CHARACTER: ' + END +result['data']['results'][0]['name'])
+        char_id = result['data']['results'][0]['id']
+        url = 'http://gateway.marvel.com/v1/public/characters/'+str(char_id)+'/events?'
+        option = 'orderBy=-modified&&limit=3&'
+        m = hashlib.md5() 
+        ts = str(time.time())
+        ts_byte = bytes(ts, 'utf-8')  
+        m.update(ts_byte) 
+        m.update(b'cc695d675d0bcda21f1e70dc37be9a0dc59511c9')
+        m.update(b"cc4e5692a3f7e7f48ec7b924e636cf3b")
+        hasht = m.hexdigest() 
+        payload = {'ts': ts, 'apikey': PUBLIC_KEY, 'hash': hasht}
+        r = requests.get(url+option, params=payload)
+        result = r.json()
+        comics = result['data']['results']
+        for i in comics:
+            print(BOLD + 'TITLE: ' + END + str(i['title']))
+            print(BOLD + 'DESCRIPTION: ' + END + str(i['description']))
+            creator_list = []
+            
+            creator = i['creators']['items']
+            for j in creator:
+                creator_list.append(j['name'])
+            creator_list_1 = ', '.join(creator_list)
+            print(BOLD + 'CREATORS: ' + END + str(creator_list_1))
+            
+            char_list = []
+            character = i['characters']['items']
+            for k in character:
+                char_list.append(k['name'])
+            char_list_1 = ', '.join(char_list)
+            print(BOLD + 'CHRACTERS: ' + END + str(char_list_1))
+
+            img_url = i['thumbnail']['path']+'.jpg'
+            im = Image.open(requests.get(img_url, stream=True).raw)
+            new_img = im.resize((400,500))
+            plt.axis('off')
+            plt.imshow(new_img)
+            plt.show() 
+            print(BOLD + '------------------------------------------------' + END)
+#         return result
+
+def get_hero_most_recent_series(name):
+    '''
+    get most recent 5 series of searched hero
+
+    Parameters
+    ---
+    name: string
+        Input string for interested marvel character name
+    '''
+    url = 'http://gateway.marvel.com/v1/public/characters?nameStartsWith=' 
+    option = '&limit=1&orderBy=-modified&'
+    m = hashlib.md5() 
+    ts = str(time.time())
+    ts_byte = bytes(ts, 'utf-8')  
+    m.update(ts_byte) 
+    m.update(b'cc695d675d0bcda21f1e70dc37be9a0dc59511c9')
+    m.update(b"cc4e5692a3f7e7f48ec7b924e636cf3b")
+    hasht = m.hexdigest() 
+    payload = {'ts': ts, 'apikey': PUBLIC_KEY, 'hash': hasht}
+    r = requests.get(url+str(name)+option, params=payload)
+    result = r.json()
+    if result['data']['count'] == 0:
+        print('Ooooops there is no match, please try again (e.g. Spider-Man, Hulk). ')
+    else:
+        print(BOLD + 'MARVEL CHARACTER: ' + END +result['data']['results'][0]['name'])
+        char_id = result['data']['results'][0]['id']
+        url = 'http://gateway.marvel.com/v1/public/characters/'+str(char_id)+'/series?'
+        option = 'orderBy=-modified&&limit=5&'
+        m = hashlib.md5() 
+        ts = str(time.time())
+        ts_byte = bytes(ts, 'utf-8')  
+        m.update(ts_byte) 
+        m.update(b'cc695d675d0bcda21f1e70dc37be9a0dc59511c9')
+        m.update(b"cc4e5692a3f7e7f48ec7b924e636cf3b")
+        hasht = m.hexdigest() 
+        payload = {'ts': ts, 'apikey': PUBLIC_KEY, 'hash': hasht}
+        r = requests.get(url+option, params=payload)
+        result = r.json()
+        comics = result['data']['results']
+        for i in comics:
+            print(BOLD + 'TITLE: ' + END + str(i['title']))
+            print(BOLD + 'DESCRIPTION: ' + END + str(i['description']))
+            creator_list = []
+            
+            creator = i['creators']['items']
+            for j in creator:
+                creator_list.append(j['name'])
+            creator_list_1 = ', '.join(creator_list)
+            print(BOLD + 'CREATORS: ' + END + str(creator_list_1))
+            
+            char_list = []
+            character = i['characters']['items']
+            for k in character:
+                char_list.append(k['name'])
+            char_list_1 = ', '.join(char_list)
+            print(BOLD + 'CHRACTERS: ' + END + str(char_list_1))
+
+            img_url = i['thumbnail']['path']+'.jpg'
+            im = Image.open(requests.get(img_url, stream=True).raw)
+            new_img = im.resize((400,500))
+            plt.imshow(new_img)
+            plt.axis('off')
+            plt.show() 
+            print(BOLD + '------------------------------------------------' + END)
+#         return result
+                
+        

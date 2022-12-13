@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "marvel_api_client"
-version = "0.1.0"
+version = "0.1.2"
 description = "get marvel charaacter descriptions"
 authors = ["Yixiao Zhou"]
 license = "MIT"
